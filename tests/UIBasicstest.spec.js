@@ -29,9 +29,10 @@ test("First Playwright test", async ({ page }) => {
   await expect(page).toHaveTitle("Google");
 });
 
-test.only("UI Controls 17-", async ({ page }) => {
+test("UI Controls 17-", async ({ page }) => {
   const userField = page.locator("#username");
   const submit = page.locator("#signInBtn");
+  const documentLink = page.locator("[href*='documents-request']");
   await page.goto("https://rahulshettyacademy.com/loginpagePractise");
   const dropdown = page.locator("select.form-control");
   await dropdown.selectOption("consult");
@@ -43,5 +44,30 @@ test.only("UI Controls 17-", async ({ page }) => {
   await expect(page.locator("#terms")).toBeChecked();
   await page.locator("#terms").uncheck();
   expect(await page.locator("#terms").isChecked()).toBeFalsy();
+  await expect(documentLink).toHaveAttribute("class", "blinkingText");
+  //<a href="https://rahulshettyacademy.com/documents-request" class="blinkingText" target="_blank">Free Access to InterviewQues/ResumeAssistance/Material</a>
+  await expect(documentLink).toHaveText(
+    "Free Access to InterviewQues/ResumeAssistance/Material"
+  );
   //await page.pause();
+});
+
+test.only("Child Window handling", async ({ browser }) => {
+  const context = await browser.newContext();
+  const page = await context.newPage();
+  await page.goto("https://rahulshettyacademy.com/loginpagePractise");
+  const documentLink = page.locator("[href*='documents-request']");
+  const [newPage] = await Promise.all([
+    context.waitForEvent("page"),
+    documentLink.click(),
+  ]);
+  const text = await newPage.locator(".red").textContent();
+  // text: Please email us at mentor@rahulshettyacademy.com with below template to receive response
+  // split domain from text
+  const arrayText = text.split("@");
+  const domain = arrayText[1].split(" ")[0];
+  console.log(text);
+  console.log(domain);
+  await page.locator("#username").type(domain);
+  await page.pause();
 });
