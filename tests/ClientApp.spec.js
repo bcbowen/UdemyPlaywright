@@ -29,4 +29,17 @@ test("Client App Login", async ({ page }) => {
   expect(
     page.locator(`h3:has-text("${productName}")`).isVisible()
   ).toBeTruthy();
+  await page.locator("text=Checkout").click();
+  await page.locator("[placeholder*='Country']").type("ind", { delay: 100 });
+  const options = page.locator(".ta-results");
+  await options.waitFor();
+  const optionsCount = await options.locator("button").count();
+  for (let i = 0; i < optionsCount; i++) {
+    let text = await options.locator("button").nth(i).textContent();
+    if (text === " India") {
+      await options.locator("button").nth(i).click();
+      break;
+    }
+  }
+  await page.pause();
 });
