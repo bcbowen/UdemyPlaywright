@@ -52,7 +52,7 @@ test("UI Controls 17-", async ({ page }) => {
   //await page.pause();
 });
 
-test.only("Child Window handling", async ({ browser }) => {
+test("Child Window handling", async ({ browser }) => {
   const context = await browser.newContext();
   const page = await context.newPage();
   await page.goto("https://rahulshettyacademy.com/loginpagePractise");
