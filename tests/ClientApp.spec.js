@@ -41,5 +41,25 @@ test("Client App Login", async ({ page }) => {
       break;
     }
   }
-  await page.pause();
+
+  await expect(page.locator(".user__name [type='text']").first()).toHaveText(
+    userid
+  );
+  await page.locator(".action__submit").click();
+  //await page.pause();
+  await expect(page.locator(".hero-primary")).toHaveText(
+    " Thankyou for the order. "
+  );
+  const orderNumber = await page
+    .locator(".em-spacer-1 .ng-star-inserted")
+    .textContent();
+  console.log(orderNumber);
+
+  // exercise: find order from order history and go to view order
+  await page.locator("[routerlink*='myorders']").click();
+  // body > app-root > app-myorders > div.container.table-responsive.py-5 > table
+  // body > app-root > app-myorders > div.container.table-responsive.py-5 > table > thead
+  const ordersTable = await page.locator("table.ng-star-inserted tbody");
+  const orderCount = await ordersTable.locator("tr").count();
+  for (let i = 0; i < orderCount; i++) {}
 });
