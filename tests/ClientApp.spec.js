@@ -46,7 +46,7 @@ test("Client App Login", async ({ page }) => {
     userid
   );
   await page.locator(".action__submit").click();
-  //await page.pause();
+  
   await expect(page.locator(".hero-primary")).toHaveText(
     " Thankyou for the order. "
   );
@@ -56,10 +56,17 @@ test("Client App Login", async ({ page }) => {
   console.log(orderNumber);
 
   // exercise: find order from order history and go to view order
-  await page.locator("[routerlink*='myorders']").click();
+  await page.locator("button[routerlink*='myorders']").click();
   // body > app-root > app-myorders > div.container.table-responsive.py-5 > table
   // body > app-root > app-myorders > div.container.table-responsive.py-5 > table > thead
   const ordersTable = await page.locator("table.ng-star-inserted tbody");
   const orderCount = await ordersTable.locator("tr").count();
-  for (let i = 0; i < orderCount; i++) {}
+  for (let i = 0; i < orderCount; i++) {
+    const orderRow = ordersTable.locator("tr").nth(i); 
+    if (await orderRow.locator("th").textContent() == orderNumber){
+      await orderRow.locator(".btn-primary").click(); 
+      break;
+    }
+  }
+  await page.pause();
 });
