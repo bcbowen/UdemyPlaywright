@@ -46,7 +46,7 @@ test("Client App Login", async ({ page }) => {
     userid
   );
   await page.locator(".action__submit").click();
-  
+
   await expect(page.locator(".hero-primary")).toHaveText(
     " Thankyou for the order. "
   );
@@ -60,13 +60,17 @@ test("Client App Login", async ({ page }) => {
   // body > app-root > app-myorders > div.container.table-responsive.py-5 > table
   // body > app-root > app-myorders > div.container.table-responsive.py-5 > table > thead
   const ordersTable = await page.locator("table.ng-star-inserted tbody");
+  await page.pause();
   const orderCount = await ordersTable.locator("tr").count();
+  console.log(`Order count: ${orderCount}`);
+
   for (let i = 0; i < orderCount; i++) {
-    const orderRow = ordersTable.locator("tr").nth(i); 
-    if (await orderRow.locator("th").textContent() == orderNumber){
-      await orderRow.locator(".btn-primary").click(); 
+    const orderRow = await ordersTable.locator("tr").nth(i);
+
+    if (await orderRow.locator("th").textContent().includes(orderNumber)) {
+      console.log("Found");
+      await orderRow.locator(".btn-primary").click();
       break;
     }
   }
-  await page.pause();
 });
