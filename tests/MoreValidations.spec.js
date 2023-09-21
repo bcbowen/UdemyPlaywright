@@ -11,4 +11,8 @@ test("Popup validations", async ({ page }) => {
   await expect(page.locator("#displayed-text")).toBeVisible();
   await page.locator("#hide-textbox").click();
   await expect(page.locator("#displayed-text")).toBeHidden();
+  page.on("dialog", (dialog) => dialog.accept());
+  //page.on("dialog", (dialog) => dialog.dismiss());
+  await page.locator("#confirmbtn").click();
+  await page.pause();
 });
