@@ -1,44 +1,33 @@
 const { test, expect, request } = require("@playwright/test");
-const loginPayload = {userEmail: "anishka@gmail.com", userPassword: "Iamking@000"}; 
-const orderPayload = { orders: [{country: "India", productOrderId: "6262e95ae26b7e1a10e89bf0"}] };
+const { ApiUtils } = require("./utils/ApiUtils");
+const loginPayload = {
+  userEmail: "anishka@gmail.com",
+  userPassword: "Iamking@000",
+};
+const orderPayload = {
+  orders: [{ country: "India", productOrderId: "6262e95ae26b7e1a10e89bf0" }],
+};
 let token;
-let orderId; 
+let orderId;
+let apiContext;
 test.beforeAll(async () => {
-    const apiContext = await request.newContext(); 
-    const loginResponse = await apiContext.post("https://rahulshettyacademy.com/api/ecom/auth/login", 
-        { data: loginPayload }
-    ); 
-    expect(loginResponse.ok()).toBeTruthy();
-    const loginResponseJson = await loginResponse.json();
-    token = loginResponseJson.token; 
-    console.log(token); 
+  apiContext = await request.newContext();
+  const apiUtils = new ApiUtils(apiContext, loginPayload);
+  await apiUtils.createOrder(orderPayload);
+});
 
-    // 6262e95ae26b7e1a10e89bf0
-    const orderResponse = await apiContext.post("https://rahulshettyacademy.com/api/ecom/order/create-order", 
-        { 
-            data: orderPayload, 
-            headers: {"Authorization": token, "Content-Type": "application/json"} 
-        }
-    ); 
-
-    const orderResponseJson = await orderResponse.json();
-    orderId = orderResponseJson.orders[0];
-    
-}); 
-
-test.beforeEach(async () => {
-    
-}); 
+//test.beforeEach(async () => {});
 
 test("Client App Login", async ({ page }) => {
+  const Utils = new ApiUtils(apiContext);
   page.addInitScript((value) => {
-    window.localStorage.setItem('token', value);
+    window.localStorage.setItem("token", value);
   }, token);
   const productName = "zara coat 3";
   const userid = "anshika@gmail.com";
   const password = "Iamking@000";
   const products = page.locator(".card-body");
-await page.goto("https://rahulshettyacademy.com/client");
+  await page.goto("https://rahulshettyacademy.com/client");
 
   /*
   
@@ -47,7 +36,7 @@ await page.goto("https://rahulshettyacademy.com/client");
   await page.locator("#login").click();
   await page.waitForLoadState("networkidle");
   */
-/*
+  /*
   await page.locator(".card-body b").first().waitFor();
   const count = await products.count();
   console.log(count);
