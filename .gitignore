@@ -1,3 +1,6 @@
+# local state
+state.json
+
 # Logs
 logs
 *.log
