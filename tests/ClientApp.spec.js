@@ -59,18 +59,16 @@ test("Client App Login", async ({ page }) => {
   await page.locator("button[routerlink*='myorders']").click();
   // body > app-root > app-myorders > div.container.table-responsive.py-5 > table
   // body > app-root > app-myorders > div.container.table-responsive.py-5 > table > thead
-  const ordersTable = await page.locator("table.ng-star-inserted tbody");
-  await page.pause();
-  const orderCount = await ordersTable.locator("tr").count();
-  console.log(`Order count: ${orderCount}`);
+  await page.locator("tbody").waitFor();
+  const rows = await page.locator("tbody tr");
 
-  for (let i = 0; i < orderCount; i++) {
-    const orderRow = await ordersTable.locator("tr").nth(i);
-
-    if (await orderRow.locator("th").textContent().includes(orderNumber)) {
-      console.log("Found");
-      await orderRow.locator(".btn-primary").click();
+  for (let i = 0; i < (await rows.count()); ++i) {
+    const rowOrderId = await rows.nth(i).locator("th").textContent();
+    if (orderNumber.includes(rowOrderId)) {
+      await rows.nth(i).locator("button").first().click();
       break;
     }
   }
+  const orderIdDetails = await page.locator(".col-text").textContent();
+  expect(orderNumber.includes(orderIdDetails)).toBeTruthy();
 });
