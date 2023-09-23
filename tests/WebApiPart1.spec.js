@@ -1,6 +1,8 @@
 const { test, expect, request } = require("@playwright/test");
 const loginPayload = {userEmail: "anishka@gmail.com", userPassword: "Iamking@000"}; 
+const orderPayload = { orders: [{country: "India", productOrderId: "6262e95ae26b7e1a10e89bf0"}] };
 let token;
+let orderId; 
 test.beforeAll(async () => {
     const apiContext = await request.newContext(); 
     const loginResponse = await apiContext.post("https://rahulshettyacademy.com/api/ecom/auth/login", 
@@ -10,6 +12,18 @@ test.beforeAll(async () => {
     const loginResponseJson = await loginResponse.json();
     token = loginResponseJson.token; 
     console.log(token); 
+
+    // 6262e95ae26b7e1a10e89bf0
+    const orderResponse = await apiContext.post("https://rahulshettyacademy.com/api/ecom/order/create-order", 
+        { 
+            data: orderPayload, 
+            headers: {"Authorization": token, "Content-Type": "application/json"} 
+        }
+    ); 
+
+    const orderResponseJson = await orderResponse.json();
+    orderId = orderResponseJson.orders[0];
+    
 }); 
 
 test.beforeEach(async () => {
@@ -33,7 +47,7 @@ await page.goto("https://rahulshettyacademy.com/client");
   await page.locator("#login").click();
   await page.waitForLoadState("networkidle");
   */
-
+/*
   await page.locator(".card-body b").first().waitFor();
   const count = await products.count();
   console.log(count);
@@ -77,7 +91,7 @@ await page.goto("https://rahulshettyacademy.com/client");
     .locator(".em-spacer-1 .ng-star-inserted")
     .textContent();
   console.log(orderNumber);
-
+*/
   // exercise: find order from order history and go to view order
   await page.locator("button[routerlink*='myorders']").click();
   // body > app-root > app-myorders > div.container.table-responsive.py-5 > table
@@ -90,7 +104,7 @@ await page.goto("https://rahulshettyacademy.com/client");
   for (let i = 0; i < orderCount; i++) {
     const orderRow = await ordersTable.locator("tr").nth(i);
 
-    if (await orderRow.locator("th").textContent().includes(orderNumber)) {
+    if (await orderRow.locator("th").textContent().includes(orderId)) {
       console.log("Found");
       await orderRow.locator(".btn-primary").click();
       break;
