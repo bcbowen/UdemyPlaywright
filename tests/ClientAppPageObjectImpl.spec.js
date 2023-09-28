@@ -9,21 +9,7 @@ test("Client App Login", async ({ page }) => {
   const loginPage = new LoginPage(page);
   loginPage.goTo();
   loginPage.validLogin(username, password);
-  await page.waitForLoadState("networkidle");
 
-  await page.locator(".card-body b").first().waitFor();
-  const count = await products.count();
-  console.log(count);
-  console.log(productName);
-  //await page.pause();
-  for (let i = 0; i < count; i++) {
-    if ((await products.nth(i).locator("b").textContent()) === productName) {
-      // add to cart
-      await products.nth(i).locator("text= Add To Cart").click();
-      console.log("found");
-      break;
-    }
-  }
   await page.locator("[routerlink*='cart']").click();
   await page.locator("div li").first().waitFor();
   expect(
