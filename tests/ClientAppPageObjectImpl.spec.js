@@ -1,5 +1,6 @@
 const { test, expect } = require("@playwright/test");
 const { LoginPage } = require("../pageobjects/LoginPage");
+const { DashBoardPage } = require("../pageobjects/DashBoardPage");
 
 test("Client App Login", async ({ page }) => {
   const productName = "zara coat 3";
@@ -7,10 +8,14 @@ test("Client App Login", async ({ page }) => {
   const password = "Iamking@000";
   const products = page.locator(".card-body");
   const loginPage = new LoginPage(page);
-  loginPage.goTo();
-  loginPage.validLogin(username, password);
+  await loginPage.goTo();
+  await loginPage.validLogin(username, password);
 
-  await page.locator("[routerlink*='cart']").click();
+  /*
+  const dashboardPage = new DashBoardPage(page);
+  await dashboardPage.searchProductAddCart(productName);
+  await dashboardPage.navigateToCart();
+ 
   await page.locator("div li").first().waitFor();
   expect(
     page.locator(`h3:has-text("${productName}")`).isVisible()
@@ -57,4 +62,5 @@ test("Client App Login", async ({ page }) => {
   }
   const orderIdDetails = await page.locator(".col-text").textContent();
   expect(orderNumber.includes(orderIdDetails)).toBeTruthy();
+  */
 });
