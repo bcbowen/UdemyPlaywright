@@ -4,12 +4,17 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "npx playwright test tests/ClientAppPageObjectImpl.spec.js --headed"
+    "test": "npx playwright test tests/ClientAppPageObjectImpl.spec.js --headed",
+    "flightsTest": "npx playwright test tests/flights.spec.js --headed"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "@playwright/test": "^1.38.0"
+  },
+  "dependencies": {
+    "@azure/identity": "^3.3.0",
+    "@azure/keyvault-secrets": "^4.7.0"
   }
 }
